@@ -8,17 +8,39 @@ public class QuickName {
     static boolean exit = true;
 
     public static void main(String[] args) throws IOException {
-        String finalResult = "";
+
         while(exit==true) {
-            menu(finalResult);
+            menu();
         }
         System.out.println("Goodbye");
+
     }
 
-    public static void generateName(){
+    public static void menu() throws IOException {
+        int answer = 0;
+        List<String> generatedName = new ArrayList<>();
+        System.out.println("What do you want to do?\n1. Generate name 2. Exit");
+        answer = s.nextInt();
+
+        if (answer == 1) {
+            String name = makeName();
+            System.out.println("Do you want to save " + name +"? 1. Yes 2. No");
+            answer = s.nextInt();
+            if(answer==1){
+                SaveName.saveNameToFile(name);
+                System.out.println("Saved");
+            }else {
+                menu();
+            }
+        } else{
+            exit = false;
+        }
+    }
+
+    public static String makeName() {
         List<String> vowel = new ArrayList<>(List.of("a","e","i","o","u","y"));
-        List<String> consonants = new ArrayList<>(List.of("sh","tr","st","lk","kl","br","ch","jt","fr","gr","hn","pr","vn","rf"));
-        List<String> letters = new ArrayList<>(List.of("b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","w","x","z","v"));
+        List<String> syllables = new ArrayList<>(List.of("sh","tr","st","lk","kl","br","ch","jt","fr","gr","hn","pr","vn","rf"));
+        List<String> consonants = new ArrayList<>(List.of("b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","w","x","z","v"));
 
         System.out.print("Name length: ");
         int nameLength = 0;
@@ -28,43 +50,28 @@ public class QuickName {
             nameLength = s.nextInt();
         }
 
-        List<String> generatedName = new ArrayList<>();
 
-        for(int i = 0; i < nameLength; i++){
-            generatedName.add(randomString(letters));
-            generatedName.add(randomString(letters));
-            generatedName.add(randomString(vowel));
+        List<String> generatedName = new ArrayList<>();
+        for(int i = 0; i < nameLength; i++) {
             generatedName.add(randomString(vowel));
         }
 
-        generatedName.remove(randomIntFromArray(generatedName));
-        Collections.shuffle(generatedName);
-        showFinalResult(generatedName);
-    }
-
-    public static void menu(String finalResult) throws IOException {
-        int answer = 0;
-        List<String> generatedName = new ArrayList<>();
-        System.out.println("What do you want to do?\n1. Save name 2. Shuffle letters 3. Generate name 4. Exit");
-        answer = s.nextInt();
-
-        if (answer == 1) {
-            SaveName.saveNameToFile(finalResult);
-            System.out.println("Zapisano");
-        } else if(answer == 2) {
-            shuffleLetters(generatedName);
-            showFinalResult(generatedName);
-            menu(finalResult);
-        } else if(answer == 3){
-            generateName();
-            showFinalResult(generatedName);
-        }else{
-            exit = false;
+        for(int i = 0; i < nameLength; i++) {
+            generatedName.add(randomString(consonants));
         }
+
+        for(int i = 0; i < nameLength; i++) {
+            generatedName.remove(randomIntFromArray(generatedName));
+        }
+
+        Collections.shuffle(generatedName);
+
+        return showFinalResult(generatedName);
     }
 
-    public static void shuffleLetters(List<String> generatedName){
+    public static String shuffleLetters(List<String> generatedName){
         Collections.shuffle(generatedName);
+        return showFinalResult(generatedName);
     }
 
     public static int randomIntFromArray(List<String> array){
@@ -83,15 +90,15 @@ public class QuickName {
         }
     }
 
-    public static void showFinalResult(List<String> generatedName){
+    public static String showFinalResult(List<String> generatedName){
         String result = "";
         for(String s : generatedName){
             result+=s;
         }
 
         String finalResult = makeFirstLetterUppercase(result);
-        //String finalResult = result;
 
         System.out.println("Result: " + finalResult);
+        return finalResult;
     }
 }
